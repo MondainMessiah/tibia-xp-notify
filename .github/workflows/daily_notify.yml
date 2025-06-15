@@ -2,7 +2,7 @@ name: Daily Tibia XP Notify
 
 on:
   schedule:
-    - cron: '5 0 * * *'   # Runs daily at 00:05 UTC
+    - cron: '5 0 * * *'   # Every day at 00:05 UTC
 
 jobs:
   notify:
