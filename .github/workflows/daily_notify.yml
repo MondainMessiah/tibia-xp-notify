@@ -1,1 +1,34 @@
+name: Daily Tibia XP Notify
 
+on:
+  schedule:
+    - cron: '5 0 * * *'   # Runs daily at 00:05 UTC
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      
+      - name: Install dependencies
+        run: pip install requests
+      
+      - name: Run XP notification script
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python notify_xp.py
+      
+      - name: Commit updated xp_storage.json
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add xp_storage.json
+          git commit -m "Update XP storage for $(date -u +"%Y-%m-%d")" || echo "No changes to commit"
+          git push
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
